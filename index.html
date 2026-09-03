@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChatWave - Conversas</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --bg: #f5f7fb;
+      --white: #ffffff;
+      --text: #1f2937;
+      --muted: #8a94a6;
+      --border: #e8ebf0;
+      --message: #6366f1;
+      --received: #f0f2f6;
+      --online: #22c55e;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .app {
+      display: flex;
+      height: 100vh;
+      max-width: 1500px;
+      margin: auto;
+      background: var(--white);
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.08);
+    }
+
+    /* =========================
+       SIDEBAR
+    ========================= */
+
+    .sidebar {
+      width: 350px;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+    }
+
+    .sidebar-header {
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: white;
+      display: grid;
+      place-items: center;
+      font-size: 20px;
+    }
+
+    .new-chat {
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: #eef0ff;
+      color: var(--primary);
+      cursor: pointer;
+      font-size: 22px;
+      transition: .2s;
+    }
+
+    .new-chat:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    .search {
+      padding: 0 20px 18px;
+    }
+
+    .search-box {
+      height: 45px;
+      border-radius: 12px;
+      background: #f5f6f9;
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      gap: 10px;
+    }
+
+    .search-box span {
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .search-box input {
+      border: none;
+      outline: none;
+      background: transparent;
+      width: 100%;
+      font-size: 14px;
+      color: var(--text);
+    }
+
+    .section-title {
+      padding: 5px 20px 12px;
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      font-weight: bold;
+      letter-spacing: .7px;
+    }
+
+    .contacts {
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .contact {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      padding: 14px 20px;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .contact:hover {
+      background: #f7f7fb;
+    }
+
+    .contact.active {
+      background: #eef0ff;
+    }
+
+    .avatar {
+      width: 48px;
+      height: 48px;
+      min-width: 48px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-weight: bold;
+      font-size: 17px;
+      position: relative;
+    }
+
+    .avatar.purple {
+      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+    }
+
+    .avatar.blue {
+      background: linear-gradient(135deg, #3b82f6, #06b6d4);
+    }
+
+    .avatar.green {
+      background: linear-gradient(135deg, #22c55e, #10b981);
+    }
+
+    .avatar.orange {
+      background: linear-gradient(135deg, #f97316, #ef4444);
+    }
+
+    .avatar.pink {
+      background: linear-gradient(135deg, #ec4899, #f43f5e);
+    }
+
+    .online-dot {
+      position: absolute;
+      right: 0;
+      bottom: 1px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--online);
+      border: 2px solid white;
+    }
+
+    .contact-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .contact-name {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 5px;
+    }
+
+    .contact-name strong {
+      font-size: 14px;
+    }
+
+    .time {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .last-message {
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .unread {
+      background: var(--primary);
+      color: white;
+      min-width: 20px;
+      height: 20px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      font-size: 10px;
+      font-weight: bold;
+    }
+
+    /* =========================
+       CHAT
+    ========================= */
+
+    .chat {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .chat-header {
+      height: 82px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 28px;
+      gap: 14px;
+    }
+
+    .chat-user {
+      flex: 1;
+    }
+
+    .chat-user strong {
+      display: block;
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+
+    .status {
+      font-size: 12px;
+      color: var(--online);
+    }
+
+    .chat-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      border: none;
+      background: #f5f6f9;
+      border-radius: 10px;
+      cursor: pointer;
+      color: #697386;
+      font-size: 18px;
+      transition: .2s;
+    }
+
+    .icon-btn:hover {
+      background: #eef0ff;
+      color: var(--primary);
+    }
+
+    /* =========================
+       MESSAGES
+    ========================= */
+
+    .messages {
+      flex: 1;
+      padding: 30px;
+      overflow-y: auto;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(99,102,241,.03), transparent 25%),
+        radial-gradient(circle at 80% 80%, rgba(139,92,246,.03), transparent 25%),
+        #fcfcfe;
+    }
+
+    .date {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 25px;
+    }
+
+    .date span {
+      background: #eef0f4;
+      color: #8a94a6;
+      font-size: 11px;
+      padding: 7px 13px;
+      border-radius: 20px;
+    }
+
+    .message-row {
+      display: flex;
+      margin-bottom: 18px;
+    }
+
+    .message-row.sent {
+      justify-content: flex-end;
+    }
+
+    .message {
+      max-width: 65%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .bubble {
+      padding: 12px 16px;
+      border-radius: 16px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .received .bubble {
+      background: var(--received);
+      border-bottom-left-radius: 4px;
+    }
+
+    .sent .bubble {
+      background: linear-gradient(135deg, #6366f1, #7c3aed);
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+
+    .message-time {
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 5px;
+    }
+
+    .sent .message-time {
+      text-align: right;
+    }
+
+    .typing {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 12px 16px;
+      background: var(--received);
+      border-radius: 16px;
+      width: fit-content;
+    }
+
+    .typing span {
+      width: 6px;
+      height: 6px;
+      background: #9ca3af;
+      border-radius: 50%;
+      animation: typing 1.2s infinite;
+    }
+
+    .typing span:nth-child(2) {
+      animation-delay: .2s;
+    }
+
+    .typing span:nth-child(3) {
+      animation-delay: .4s;
+    }
+
+    @keyframes typing {
+      0%, 60%, 100% {
+        transform: translateY(0);
+      }
+      30% {
+        transform: translateY(-5px);
+      }
+    }
+
+    /* =========================
+       INPUT
+    ========================= */
+
+    .composer {
+      border-top: 1px solid var(--border);
+      padding: 18px 25px;
+      background: white;
+    }
+
+    .composer-inner {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #f6f7fa;
+      border-radius: 14px;
+      padding: 7px 8px 7px 14px;
+    }
+
+    .attach {
+      border: none;
+      background: transparent;
+      color: #7c8799;
+      cursor: pointer;
+      font-size: 20px;
+    }
+
+    .composer input {
+      flex: 1;
+      border: none;
+      outline: none;
+      background: transparent;
+      height: 38px;
+      font-size: 14px;
+    }
+
+    .send {
+      border: none;
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: var(--primary);
+      color: white;
+      cursor: pointer;
+      font-size: 18px;
+      transition: .2s;
+    }
+
+    .send:hover {
+      background: var(--primary-dark);
+      transform: scale(1.04);
+    }
+
+    /* =========================
+       MOBILE
+    ========================= */
+
+    .mobile-back {
+      display: none;
+    }
+
+    @media (max-width: 800px) {
+      .sidebar {
+        width: 100%;
+      }
+
+      .chat {
+        display: none;
+      }
+
+      .app.chat-open .sidebar {
+        display: none;
+      }
+
+      .app.chat-open .chat {
+        display: flex;
+      }
+
+      .mobile-back {
+        display: block;
+        border: none;
+        background: transparent;
+        font-size: 22px;
+        color: #555;
+        cursor: pointer;
+      }
+
+      .chat-header {
+        padding: 0 15px;
+      }
+
+      .messages {
+        padding: 20px 15px;
+      }
+
+      .message {
+        max-width: 82%;
+      }
+
+      .chat-actions .icon-btn:nth-child(2) {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app" id="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+      <div class="sidebar-header">
+        <div class="logo">
+          <div class="logo-icon">💬</div>
+          ChatWave
+        </div>
+
+        <button class="new-chat" onclick="newChat()">+</button>
+      </div>
+
+      <div class="search">
+        <div class="search-box">
+          <span>⌕</span>
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Pesquisar conversas..."
+            oninput="filterContacts()"
+          >
+        </div>
+      </div>
+
+      <div class="section-title">Conversas</div>
+
+      <div class="contacts" id="contacts">
+
+        <div class="contact active"
+             data-name="Mariana Silva"
+             onclick="openChat('Mariana Silva', 'MS', 'purple')">
+
+          <div class="avatar purple">
+            MS
+            <div class="online-dot"></div>
+          </div>
+
+          <div class="contact-info">
+            <div class="contact-name">
+              <strong>Mariana Silva</strong>
+              <span class="time">19:32</span>
+            </div>
+
+            <div class="last-message">
+              Perfeito! Até amanhã 😊
+            </div>
+          </div>
+
+          <div class="unread">2</div>
+        </div>
+
+        <div class="contact"
+             data-name="Lucas Oliveira"
+             onclick="openChat('Lucas Oliveira', 'LO', 'blue')">
+
+          <div class="avatar blue">LO</div>
+
+          <div class="contact-info">
+            <div class="contact-name">
+              <strong>Lucas Oliveira</strong>
+              <span class="time">18:45</span>
+            </div>
+
+            <div class="last-message">
+              Você já viu aquele projeto?
+            </div>
+          </div>
+        </div>
+
+        <div class="contact"
+             data-name="Ana Costa"
+             onclick="openChat('Ana Costa', 'AC', 'green')">
+
+          <div class="avatar green">
+            AC
+            <div class="online-dot"></div>
+          </div>
+
+          <div class="contact-info">
+            <div class="contact-name">
+              <strong>Ana Costa</strong>
+              <span class="time">17:21</span>
+            </div>
+
+            <div class="last-message">
+              Obrigada pela ajuda!
+            </div>
+          </div>
+        </div>
+
+        <div class="contact"
+             data-name="Pedro Santos"
+             onclick="openChat('Pedro Santos', 'PS', 'orange')">
+
+          <div class="avatar orange">PS</div>
+
+          <div class="contact-info">
+            <div class="contact-name">
+              <strong>Pedro Santos</strong>
+              <span class="time">16:08</span>
+            </div>
+
+            <div class="last-message">
+              Vamos marcar para sexta?
+            </div>
+          </div>
+        </div>
+
+        <div class="contact"
+             data-name="Julia Martins"
+             onclick="openChat('Julia Martins', 'JM', 'pink')">
+
+          <div class="avatar pink">
+            JM
+            <div class="online-dot"></div>
+          </div>
+
+          <div class="contact-info">
+            <div class="contact-name">
+              <strong>Julia Martins</strong>
+              <span class="time">15:40</span>
+            </div>
+
+            <div class="last-message">
+              Hahaha 😂
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </aside>
+
+
+    <!-- CHAT -->
+    <main class="chat">
+
+      <header class="chat-header">
+
+        <button class="mobile-back" onclick="backToContacts()">
+          ←
+        </button>
+
+        <div class="avatar purple" id="chatAvatar">
+          MS
+          <div class="online-dot"></div>
+        </div>
+
+        <div class="chat-user">
+          <strong id="chatName">Mariana Silva</strong>
+          <span class="status" id="chatStatus">
+            ● Online agora
+          </span>
+        </div>
+
+        <div class="chat-actions">
+          <button class="icon-btn" title="Ligar">☎</button>
+          <button class="icon-btn" title="Vídeo">▣</button>
+          <button class="icon-btn" title="Mais opções">⋮</button>
+        </div>
+
+      </header>
+
+
+      <section class="messages" id="messages">
+
+        <div class="date">
+          <span>Hoje</span>
+        </div>
+
+        <div class="message-row received">
+          <div class="message">
+            <div class="bubble">
+              Oi! Tudo bem? 😊
+            </div>
+            <span class="message-time">
+              19:20
+            </span>
+          </div>
+        </div>
+
+        <div class="message-row sent">
+          <div class="message">
+            <div class="bubble">
+              Oi, Mariana! Tudo ótimo. E com você?
+            </div>
+            <span class="message-time">
+              19:22 ✓✓
+            </span>
+          </div>
+        </div>
+
+        <div class="message-row received">
+          <div class="message">
+            <div class="bubble">
+              Também estou bem! Você conseguiu terminar aquele trabalho?
+            </div>
+            <span class="message-time">
+              19:24
+            </span>
+          </div>
+        </div>
+
+        <div class="message-row sent">
+          <div class="message">
+            <div class="bubble">
+              Consegui sim! Acabei agora há pouco 😄
+            </div>
+            <span class="message-time">
+              19:26 ✓✓
+            </span>
+          </div>
+        </div>
+
+        <div class="message-row received">
+          <div class="message">
+            <div class="bubble">
+              Que ótimo! Então podemos combinar de sair amanhã.
+            </div>
+            <span class="message-time">
+              19:28
+            </span>
+          </div>
+        </div>
+
+        <div class="message-row sent">
+          <div class="message">
+            <div class="bubble">
+              Claro! Que horas você prefere?
+            </div>
+            <span class="message-time">
+              19:30 ✓✓
+            </span>
+          </div>
+        </div>
+
+      </section>
+
+
+      <!-- COMPOSER -->
+      <div class="composer">
+        <div class="composer-inner">
+
+          <button class="attach" title="Anexar arquivo">
+            📎
+          </button>
+
+          <input
+            type="text"
+            id="messageInput"
+            placeholder="Digite uma mensagem..."
+            autocomplete="off"
+            onkeydown="handleEnter(event)"
+          >
+
+          <button class="send" onclick="sendMessage()">
+            ➤
+          </button>
+
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+
+  <script>
+
+    const app = document.getElementById("app");
+    const messages = document.getElementById("messages");
+    const messageInput = document.getElementById("messageInput");
+
+    function sendMessage() {
+
+      const text = messageInput.value.trim();
+
+      if (!text) return;
+
+      const row = document.createElement("div");
+      row.className = "message-row sent";
+
+      row.innerHTML = `
+        <div class="message">
+          <div class="bubble">
+            ${escapeHTML(text)}
+          </div>
+          <span class="message-time">
+            Agora ✓✓
+          </span>
+        </div>
+      `;
+
+      messages.appendChild(row);
+
+      messageInput.value = "";
+
+      messages.scrollTop = messages.scrollHeight;
+
+      simulateReply();
+    }
+
+
+    function handleEnter(event) {
+
+      if (event.key === "Enter") {
+        event.preventDefault();
+        sendMessage();
+      }
+
+    }
+
+
+    function simulateReply() {
+
+      const typingRow = document.createElement("div");
+
+      typingRow.className = "message-row received";
+      typingRow.id = "typing";
+
+      typingRow.innerHTML = `
+        <div class="message">
+          <div class="typing">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+      `;
+
+      messages.appendChild(typingRow);
+      messages.scrollTop = messages.scrollHeight;
+
+      setTimeout(() => {
+
+        const typing = document.getElementById("typing");
+
+        if (typing) {
+          typing.remove();
+        }
+
+        const reply = document.createElement("div");
+
+        reply.className = "message-row received";
+
+        reply.innerHTML = `
+          <div class="message">
+            <div class="bubble">
+              Legal! 😊
+            </div>
+            <span class="message-time">
+              Agora
+            </span>
+          </div>
+        `;
+
+        messages.appendChild(reply);
+        messages.scrollTop = messages.scrollHeight;
+
+      }, 1500);
+
+    }
+
+
+    function openChat(name, initials, color) {
+
+      document.getElementById("chatName").textContent = name;
+
+      const avatar = document.getElementById("chatAvatar");
+
+      avatar.className = "avatar " + color;
+      avatar.innerHTML = initials + '<div class="online-dot"></div>';
+
+      app.classList.add("chat-open");
+
+      document.querySelectorAll(".contact").forEach(contact => {
+        contact.classList.remove("active");
+      });
+
+      const selected = [...document.querySelectorAll(".contact")]
+        .find(contact => contact.dataset.name === name);
+
+      if (selected) {
+        selected.classList.add("active");
+      }
+
+    }
+
+
+    function backToContacts() {
+      app.classList.remove("chat-open");
+    }
+
+
+    function filterContacts() {
+
+      const query =
+        document.getElementById("searchInput")
+          .value
+          .toLowerCase();
+
+      document.querySelectorAll(".contact").forEach(contact => {
+
+        const name =
+          contact.dataset.name.toLowerCase();
+
+        contact.style.display =
+          name.includes(query) ? "flex" : "none";
+
+      });
+
+    }
+
+
+    function newChat() {
+
+      alert(
+        "Nova conversa\n\n" +
+        "Aqui você pode abrir um formulário " +
+        "para selecionar um novo contato."
+      );
+
+    }
+
+
+    function escapeHTML(text) {
+
+      const div = document.createElement("div");
+      div.textContent = text;
+
+      return div.innerHTML;
+
+    }
+
+
+    // Faz o chat começar sempre no final
+    messages.scrollTop = messages.scrollHeight;
+
+  </script>
+
+</body>
+</html>
