@@ -1,996 +1,491 @@
+/* ==============================
+   RESET
+============================== */
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-:root {
-  --discord: #5865f2;
-  --discord-hover: #4752c4;
-
-  --bg-main: #313338;
-  --bg-chat: #313338;
-  --bg-sidebar: #2b2d31;
-  --bg-sidebar-hover: #35373c;
-  --bg-active: #404249;
-
-  --input: #383a40;
-  --message-hover: #2e3035;
-
-  --text: #f2f3f5;
-  --text-secondary: #b5bac1;
-  --text-muted: #949ba4;
-
-  --border: rgba(0, 0, 0, 0.2);
-
-  --online: #23a559;
-  --danger: #ed4245;
-}
-
-/* =========================
-   BASE
-========================= */
-
-html,
 body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: #0b0d10;
+  color: #f2f3f5;
+  min-height: 100vh;
+}
+
+
+/* ==============================
+   CONTAINER PRINCIPAL
+============================== */
+
+.container {
   width: 100%;
-  height: 100%;
-}
-
-body {
-  font-family:
-    Arial,
-    Helvetica,
-    sans-serif;
-
-  background: var(--bg-main);
-  color: var(--text);
-
-  overflow: hidden;
-}
-
-button,
-input {
-  font-family: inherit;
-}
-
-/* =========================
-   APP
-========================= */
-
-.app {
-  width: 100%;
-  height: 100vh;
-
-  display: flex;
-
-  background: var(--bg-main);
-}
-
-/* =========================
-   SIDEBAR
-   Estilo lista de conversas
-   do WhatsApp
-========================= */
-
-.sidebar {
-  width: 360px;
   height: 100vh;
 
   display: flex;
   flex-direction: column;
 
-  background: var(--bg-sidebar);
-
-  border-right: 1px solid #1e1f22;
+  background: #0b0d10;
+  overflow: hidden;
 }
 
-/* =========================
+
+/* ==============================
    HEADER
-========================= */
+============================== */
 
-.sidebar-header {
-  height: 70px;
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  padding: 0 20px;
-
-  background: var(--bg-sidebar);
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-
-  gap: 10px;
-
-  font-size: 20px;
-  font-weight: 700;
-
-  color: var(--text);
-}
-
-.logo-icon {
-  width: 38px;
-  height: 38px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  border-radius: 50%;
-
-  background: var(--discord);
-
-  color: white;
-
-  font-size: 18px;
-}
-
-.new-chat {
-  width: 38px;
-  height: 38px;
-
-  border: none;
-  border-radius: 50%;
-
-  background: transparent;
-
-  color: var(--text-secondary);
-
-  font-size: 25px;
-
-  cursor: pointer;
-
-  transition: 0.2s;
-}
-
-.new-chat:hover {
-  background: var(--bg-sidebar-hover);
-  color: white;
-}
-
-/* =========================
-   SEARCH
-========================= */
-
-.search {
-  padding: 8px 14px 14px;
-}
-
-.search-box {
-  height: 38px;
-
-  display: flex;
-  align-items: center;
-
-  gap: 10px;
-
-  padding: 0 12px;
-
-  border-radius: 6px;
-
-  background: #1e1f22;
-}
-
-.search-box span {
-  color: var(--text-muted);
-  font-size: 18px;
-}
-
-.search-box input {
-  width: 100%;
-
-  border: none;
-  outline: none;
-
-  background: transparent;
-
-  color: var(--text);
-
-  font-size: 13px;
-}
-
-.search-box input::placeholder {
-  color: var(--text-muted);
-}
-
-/* =========================
-   TÍTULO
-========================= */
-
-.section-title {
-  padding: 8px 16px;
-
-  color: var(--text-muted);
-
-  font-size: 11px;
-  font-weight: 700;
-
-  text-transform: uppercase;
-
-  letter-spacing: 0.5px;
-}
-
-/* =========================
-   CONTATOS
-========================= */
-
-.contacts {
-  flex: 1;
-
-  overflow-y: auto;
-
-  padding: 4px 8px;
-}
-
-/* Scrollbar */
-
-.contacts::-webkit-scrollbar,
-.messages::-webkit-scrollbar {
-  width: 8px;
-}
-
-.contacts::-webkit-scrollbar-thumb,
-.messages::-webkit-scrollbar-thumb {
-  background: #1e1f22;
-  border-radius: 10px;
-}
-
-.contacts::-webkit-scrollbar-track,
-.messages::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-/* =========================
-   CONTATO
-========================= */
-
-.contact {
+header {
   height: 64px;
 
   display: flex;
   align-items: center;
 
-  gap: 12px;
+  padding: 0 24px;
 
-  padding: 8px;
+  background: #11141a;
+  border-bottom: 1px solid #1d2330;
 
-  border-radius: 6px;
-
-  cursor: pointer;
-
-  transition:
-    background 0.15s,
-    color 0.15s;
-}
-
-.contact:hover {
-  background: var(--bg-sidebar-hover);
-}
-
-.contact.active {
-  background: var(--bg-active);
-}
-
-/* =========================
-   AVATAR
-========================= */
-
-.avatar {
-  width: 44px;
-  height: 44px;
-
-  min-width: 44px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
 
   position: relative;
-
-  border-radius: 50%;
-
-  color: white;
-
-  font-size: 14px;
-  font-weight: 700;
+  z-index: 5;
 }
 
-/* Cores dos avatares */
-
-.avatar.purple {
-  background: linear-gradient(
-    135deg,
-    #5865f2,
-    #7289da
-  );
-}
-
-.avatar.blue {
-  background: linear-gradient(
-    135deg,
-    #5865f2,
-    #3ba4ff
-  );
-}
-
-.avatar.green {
-  background: linear-gradient(
-    135deg,
-    #23a559,
-    #57f287
-  );
-}
-
-.avatar.orange {
-  background: linear-gradient(
-    135deg,
-    #f0a020,
-    #ed4245
-  );
-}
-
-.avatar.pink {
-  background: linear-gradient(
-    135deg,
-    #eb459e,
-    #f47fff
-  );
-}
-
-/* =========================
-   ONLINE
-========================= */
-
-.online-dot {
-  position: absolute;
-
-  right: -1px;
-  bottom: -1px;
-
-  width: 13px;
-  height: 13px;
-
-  border-radius: 50%;
-
-  background: var(--online);
-
-  border: 3px solid var(--bg-sidebar);
-}
-
-/* =========================
-   INFORMAÇÕES DO CONTATO
-========================= */
-
-.contact-info {
-  flex: 1;
-
-  min-width: 0;
-}
-
-.contact-name {
-  display: flex;
-
-  align-items: center;
-  justify-content: space-between;
-
-  margin-bottom: 4px;
-}
-
-.contact-name strong {
-  color: var(--text);
-
-  font-size: 14px;
-
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.time {
-  color: var(--text-muted);
-
-  font-size: 10px;
-}
-
-.last-message {
-  color: var(--text-secondary);
-
-  font-size: 12px;
-
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* =========================
-   MENSAGENS NÃO LIDAS
-========================= */
-
-.unread {
-  min-width: 18px;
-  height: 18px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  border-radius: 50%;
-
-  background: var(--discord);
-
-  color: white;
-
-  font-size: 10px;
-  font-weight: 700;
-}
-
-/* =========================
-   CHAT
-========================= */
-
-.chat {
-  flex: 1;
-
-  min-width: 0;
-
-  height: 100vh;
-
-  display: flex;
-  flex-direction: column;
-
-  background: var(--bg-chat);
-}
-
-/* =========================
-   CHAT HEADER
-========================= */
-
-.chat-header {
-  height: 70px;
-
-  min-height: 70px;
-
-  display: flex;
-  align-items: center;
-
-  gap: 12px;
-
-  padding: 0 18px;
-
-  background: #313338;
-
-  border-bottom: 1px solid #1e1f22;
-
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
-}
-
-.chat-header .avatar {
-  width: 40px;
-  height: 40px;
-
-  min-width: 40px;
-
-  font-size: 12px;
-}
-
-/* =========================
-   USUÁRIO
-========================= */
-
-.chat-user {
-  flex: 1;
-
-  min-width: 0;
-}
-
-.chat-user strong {
-  display: block;
-
-  color: var(--text);
-
-  font-size: 15px;
-
-  margin-bottom: 3px;
-}
-
-.status {
-  color: var(--text-muted);
-
-  font-size: 11px;
-}
-
-.status::first-letter {
-  color: var(--online);
-}
-
-/* =========================
-   AÇÕES
-========================= */
-
-.chat-actions {
-  display: flex;
-
-  gap: 4px;
-}
-
-.icon-btn {
-  width: 38px;
-  height: 38px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  border: none;
-  border-radius: 6px;
-
-  background: transparent;
-
-  color: var(--text-secondary);
-
-  cursor: pointer;
-
+header h1 {
   font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
 
-  transition: 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.icon-btn:hover {
-  background: var(--bg-sidebar-hover);
+header p {
+  margin-left: 15px;
 
-  color: var(--text);
+  color: #8e98a8;
+  font-size: 13px;
 }
 
-/* =========================
-   ÁREA DAS MENSAGENS
-   Inspirada no WhatsApp
-========================= */
 
-.messages {
+/* ==============================
+   ÁREA DO CHAT
+============================== */
+
+#chat {
   flex: 1;
+
+  width: 100%;
 
   overflow-y: auto;
 
-  padding: 25px 6% 30px;
-
-  background-color: var(--bg-chat);
-
-  /*
-    Textura extremamente discreta
-    semelhante ao fundo do WhatsApp
-  */
-
-  background-image:
-    radial-gradient(
-      rgba(255,255,255,0.015) 1px,
-      transparent 1px
-    );
-
-  background-size: 20px 20px;
-}
-
-/* =========================
-   DATA
-========================= */
-
-.date {
-  display: flex;
-
-  justify-content: center;
-
-  margin: 10px 0 25px;
-}
-
-.date span {
-  padding: 6px 12px;
-
-  border-radius: 6px;
-
-  background: #1e1f22;
-
-  color: var(--text-muted);
-
-  font-size: 11px;
-
-  box-shadow: 0 1px 2px rgba(0,0,0,.2);
-}
-
-/* =========================
-   LINHA DA MENSAGEM
-========================= */
-
-.message-row {
-  display: flex;
-
-  margin-bottom: 3px;
-
-  padding: 1px 0;
-}
-
-.message-row:hover {
-  background: rgba(0,0,0,.04);
-}
-
-.message-row.sent {
-  justify-content: flex-end;
-}
-
-/* =========================
-   MENSAGEM
-========================= */
-
-.message {
-  max-width: min(65%, 600px);
+  padding: 30px 10% 120px;
 
   display: flex;
   flex-direction: column;
+
+  gap: 6px;
+
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(37, 99, 235, 0.08),
+      transparent 35%
+    ),
+    #0b0d10;
 }
 
-/* =========================
-   BALÃO RECEBIDO
-========================= */
 
-.received .bubble {
-  background: #383a40;
+/* ==============================
+   SCROLLBAR
+============================== */
 
-  color: var(--text);
+#chat::-webkit-scrollbar {
+  width: 8px;
+}
+
+#chat::-webkit-scrollbar-track {
+  background: #080a0d;
+}
+
+#chat::-webkit-scrollbar-thumb {
+  background: #242b38;
+  border-radius: 10px;
+}
+
+#chat::-webkit-scrollbar-thumb:hover {
+  background: #303a4c;
+}
+
+
+/* ==============================
+   MENSAGENS
+============================== */
+
+.message {
+  max-width: 75%;
+
+  padding: 13px 17px;
 
   border-radius: 8px;
 
-  border-top-left-radius: 2px;
-}
+  font-size: 15px;
+  line-height: 1.6;
 
-/* =========================
-   BALÃO ENVIADO
-========================= */
+  white-space: pre-wrap;
 
-.sent .bubble {
-  background: var(--discord);
-
-  color: white;
-
-  border-radius: 8px;
-
-  border-top-right-radius: 2px;
-}
-
-/* =========================
-   BALÃO
-========================= */
-
-.bubble {
-  width: fit-content;
-
-  padding: 9px 13px;
-
-  font-size: 14px;
-
-  line-height: 1.45;
+  animation: messageAppear 0.2s ease;
 
   word-wrap: break-word;
-
-  box-shadow:
-    0 1px 2px rgba(0,0,0,.08);
 }
 
-/* =========================
-   HORÁRIO
-========================= */
+@keyframes messageAppear {
 
-.message-time {
-  margin-top: 3px;
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
 
-  color: var(--text-muted);
-
-  font-size: 9px;
-}
-
-.sent .message-time {
-  text-align: right;
-}
-
-/* =========================
-   DIGITANDO
-========================= */
-
-.typing {
-  display: flex;
-  align-items: center;
-
-  gap: 4px;
-
-  width: fit-content;
-
-  padding: 10px 13px;
-
-  background: #383a40;
-
-  border-radius: 8px;
-}
-
-.typing span {
-  width: 5px;
-  height: 5px;
-
-  border-radius: 50%;
-
-  background: var(--text-muted);
-
-  animation: typing 1.2s infinite;
-}
-
-.typing span:nth-child(2) {
-  animation-delay: .15s;
-}
-
-.typing span:nth-child(3) {
-  animation-delay: .3s;
-}
-
-@keyframes typing {
-  0%,
-  60%,
-  100% {
+  to {
+    opacity: 1;
     transform: translateY(0);
   }
 
-  30% {
-    transform: translateY(-4px);
+}
+
+
+/* ==============================
+   MENSAGEM DO USUÁRIO
+============================== */
+
+.user {
+  align-self: flex-end;
+
+  background: #2563eb;
+
+  color: #ffffff;
+
+  border-bottom-right-radius: 3px;
+
+  box-shadow:
+    0 4px 15px rgba(37, 99, 235, 0.18);
+}
+
+
+/* ==============================
+   MENSAGEM DA IA
+============================== */
+
+.bot {
+  align-self: flex-start;
+
+  background: #171b22;
+
+  color: #d9dde5;
+
+  border: 1px solid #242a35;
+
+  border-bottom-left-radius: 3px;
+
+  box-shadow:
+    0 3px 12px rgba(0, 0, 0, 0.25);
+}
+
+
+/* ==============================
+   TEXTO "PENSANDO"
+============================== */
+
+.typing {
+  color: #72809a;
+
+  font-style: italic;
+
+  animation: typingPulse 1.2s infinite;
+}
+
+@keyframes typingPulse {
+
+  0% {
+    opacity: 0.4;
   }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.4;
+  }
+
 }
 
-/* =========================
-   COMPOSER
-   Campo de mensagem
-========================= */
 
-.composer {
-  padding: 0 6% 24px;
+/* ==============================
+   WELCOME
+============================== */
 
-  background: var(--bg-chat);
+.welcome {
+  margin: auto;
+
+  text-align: center;
+
+  max-width: 500px;
+
+  color: #727b8c;
 }
 
-.composer-inner {
-  min-height: 50px;
+.welcome h2 {
+  color: #ffffff;
+
+  font-size: 30px;
+
+  margin-bottom: 10px;
+}
+
+.welcome p {
+  color: #7e8798;
+
+  font-size: 15px;
+}
+
+
+/* ==============================
+   ÁREA DE INPUT
+============================== */
+
+.input-area {
+  position: fixed;
+
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  padding: 18px 10% 22px;
+
+  background:
+    linear-gradient(
+      to top,
+      #0b0d10 70%,
+      rgba(11, 13, 16, 0.92)
+    );
+
+  border-top: 1px solid #171c25;
+
+  z-index: 10;
+}
+
+
+/* ==============================
+   CAIXA DE INPUT
+============================== */
+
+.input-box {
+  width: 100%;
+  max-width: 900px;
+
+  margin: auto;
 
   display: flex;
-  align-items: center;
+  align-items: flex-end;
 
-  padding: 5px 7px 5px 14px;
+  gap: 10px;
 
-  background: #383a40;
+  padding: 7px;
 
-  border-radius: 8px;
+  background: #181c23;
+
+  border: 1px solid #252c38;
+
+  border-radius: 12px;
+
+  box-shadow:
+    0 8px 30px rgba(0, 0, 0, 0.35);
+
+  transition: 0.2s ease;
 }
 
-/* =========================
-   BOTÃO ANEXAR
-========================= */
+.input-box:focus-within {
+  border-color: #2563eb;
 
-.attach {
-  width: 38px;
-  height: 38px;
-
-  border: none;
-
-  background: transparent;
-
-  color: var(--text-secondary);
-
-  cursor: pointer;
-
-  font-size: 20px;
-
-  border-radius: 6px;
-
-  transition: .15s;
+  box-shadow:
+    0 0 0 2px rgba(37, 99, 235, 0.15),
+    0 8px 30px rgba(0, 0, 0, 0.35);
 }
 
-.attach:hover {
-  background: var(--bg-active);
 
-  color: var(--text);
-}
+/* ==============================
+   TEXTAREA
+============================== */
 
-/* =========================
-   INPUT
-========================= */
-
-.composer input {
+textarea {
   flex: 1;
 
-  height: 38px;
+  min-height: 46px;
+  max-height: 150px;
 
-  padding: 0 10px;
+  resize: none;
+
+  padding: 13px 14px;
+
+  background: transparent;
 
   border: none;
   outline: none;
 
-  background: transparent;
+  color: #ffffff;
 
-  color: var(--text);
+  font-size: 15px;
 
-  font-size: 14px;
+  line-height: 1.5;
 }
 
-.composer input::placeholder {
-  color: var(--text-muted);
+textarea::placeholder {
+  color: #6d7686;
 }
 
-/* =========================
+textarea:focus {
+  outline: none;
+}
+
+
+/* ==============================
    BOTÃO ENVIAR
-========================= */
+============================== */
 
-.send {
-  width: 38px;
-  height: 38px;
+button {
+  height: 46px;
+  min-width: 92px;
 
   border: none;
+  border-radius: 9px;
 
-  border-radius: 6px;
+  background: #2563eb;
 
-  background: var(--discord);
+  color: #ffffff;
 
-  color: white;
+  font-size: 14px;
+  font-weight: 700;
 
   cursor: pointer;
 
-  font-size: 17px;
-
   transition:
-    background .15s,
-    transform .15s;
+    background 0.2s ease,
+    transform 0.15s ease,
+    box-shadow 0.2s ease;
 }
 
-.send:hover {
-  background: var(--discord-hover);
+button:hover {
+  background: #1d4ed8;
 
   transform: translateY(-1px);
+
+  box-shadow:
+    0 5px 15px rgba(37, 99, 235, 0.35);
 }
 
-.send:active {
+button:active {
   transform: translateY(0);
 }
 
-/* =========================
-   MOBILE
-========================= */
+button:disabled {
+  background: #26334d;
 
-.mobile-back {
-  display: none;
+  color: #71809a;
 
-  width: 38px;
-  height: 38px;
+  cursor: not-allowed;
 
-  border: none;
-  border-radius: 6px;
+  box-shadow: none;
 
-  background: transparent;
-
-  color: var(--text-secondary);
-
-  font-size: 22px;
-
-  cursor: pointer;
+  transform: none;
 }
 
-.mobile-back:hover {
-  background: var(--bg-sidebar-hover);
 
+/* ==============================
+   EFEITO DE SELEÇÃO
+============================== */
+
+::selection {
+  background: #2563eb;
   color: white;
 }
 
-/* =========================
+
+/* ==============================
    RESPONSIVIDADE
-========================= */
+============================== */
 
 @media (max-width: 900px) {
 
-  .sidebar {
-    width: 320px;
+  #chat {
+    padding-left: 5%;
+    padding-right: 5%;
   }
 
-  .messages {
-    padding-left: 25px;
-    padding-right: 25px;
-  }
-
-  .composer {
-    padding-left: 25px;
-    padding-right: 25px;
-  }
-
-  .message {
-    max-width: 75%;
-  }
-}
-
-
-@media (max-width: 700px) {
-
-  .sidebar {
-    width: 100%;
-  }
-
-  .chat {
-    display: none;
-  }
-
-  .app.chat-open .sidebar {
-    display: none;
-  }
-
-  .app.chat-open .chat {
-    display: flex;
-  }
-
-  .mobile-back {
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-  }
-
-  .chat-header {
-    height: 64px;
-    min-height: 64px;
-
-    padding: 0 10px;
-  }
-
-  .chat-actions {
-    gap: 0;
-  }
-
-  .chat-actions .icon-btn:nth-child(2) {
-    display: none;
-  }
-
-  .messages {
-    padding: 20px 12px;
-  }
-
-  .composer {
-    padding: 8px 10px 12px;
+  .input-area {
+    padding-left: 5%;
+    padding-right: 5%;
   }
 
   .message {
     max-width: 85%;
   }
 
-  .bubble {
-    font-size: 13px;
-
-    padding: 8px 11px;
-  }
 }
 
 
-/* =========================
-   PEQUENAS TELAS
-========================= */
+@media (max-width: 600px) {
 
-@media (max-width: 400px) {
-
-  .sidebar-header {
-    padding: 0 14px;
+  header {
+    height: 58px;
+    padding: 0 15px;
   }
 
-  .contact {
-    padding-left: 6px;
-    padding-right: 6px;
+  header h1 {
+    font-size: 16px;
   }
 
-  .chat-user strong {
+  header p {
+    display: none;
+  }
+
+  #chat {
+    padding:
+      20px
+      15px
+      110px;
+  }
+
+  .message {
+    max-width: 90%;
+
+    font-size: 14px;
+
+    padding: 11px 14px;
+  }
+
+  .input-area {
+    padding:
+      10px
+      10px
+      14px;
+  }
+
+  .input-box {
+    border-radius: 10px;
+  }
+
+  button {
+    min-width: 70px;
+    height: 44px;
+  }
+
+  textarea {
+    min-height: 44px;
     font-size: 14px;
   }
 
-  .status {
-    font-size: 10px;
-  }
 }
