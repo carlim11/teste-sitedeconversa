@@ -1,491 +1,64 @@
-/* ==============================
-   RESET
-============================== */
+const express = require("express");
+const dotenv = require("dotenv");
+const OpenAI = require("openai");
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+dotenv.config();
 
-body {
-  font-family: Arial, Helvetica, sans-serif;
-  background: #0b0d10;
-  color: #f2f3f5;
-  min-height: 100vh;
-}
+const app = express();
 
+app.use(express.json());
+app.use(express.static("public"));
 
-/* ==============================
-   CONTAINER PRINCIPAL
-============================== */
+const client = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
+});
 
-.container {
-  width: 100%;
-  height: 100vh;
+app.post("/api/chat", async (req, res) => {
 
-  display: flex;
-  flex-direction: column;
+  try {
 
-  background: #0b0d10;
-  overflow: hidden;
-}
+    const { question } = req.body;
 
+    if (!question) {
+      return res.status(400).json({
+        error: "Pergunta não informada."
+      });
+    }
 
-/* ==============================
-   HEADER
-============================== */
+    const response = await client.responses.create({
+      model: "gpt-5",
+      input: `
+Você é um assistente de inteligência artificial.
 
-header {
-  height: 64px;
+Responda à pergunta do usuário de forma:
+- completa
+- clara
+- organizada
+- útil
+- em português do Brasil
 
-  display: flex;
-  align-items: center;
+Pergunta do usuário:
 
-  padding: 0 24px;
+${question}
+`
+    });
 
-  background: #11141a;
-  border-bottom: 1px solid #1d2330;
+    res.json({
+      answer: response.output_text
+    });
 
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  } catch (error) {
 
-  position: relative;
-  z-index: 5;
-}
+    console.error(error);
 
-header h1 {
-  font-size: 18px;
-  font-weight: 700;
-  color: #ffffff;
+    res.status(500).json({
+      error: "Erro ao consultar a inteligência artificial."
+    });
 
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-header p {
-  margin-left: 15px;
-
-  color: #8e98a8;
-  font-size: 13px;
-}
-
-
-/* ==============================
-   ÁREA DO CHAT
-============================== */
-
-#chat {
-  flex: 1;
-
-  width: 100%;
-
-  overflow-y: auto;
-
-  padding: 30px 10% 120px;
-
-  display: flex;
-  flex-direction: column;
-
-  gap: 6px;
-
-  background:
-    radial-gradient(
-      circle at top right,
-      rgba(37, 99, 235, 0.08),
-      transparent 35%
-    ),
-    #0b0d10;
-}
-
-
-/* ==============================
-   SCROLLBAR
-============================== */
-
-#chat::-webkit-scrollbar {
-  width: 8px;
-}
-
-#chat::-webkit-scrollbar-track {
-  background: #080a0d;
-}
-
-#chat::-webkit-scrollbar-thumb {
-  background: #242b38;
-  border-radius: 10px;
-}
-
-#chat::-webkit-scrollbar-thumb:hover {
-  background: #303a4c;
-}
-
-
-/* ==============================
-   MENSAGENS
-============================== */
-
-.message {
-  max-width: 75%;
-
-  padding: 13px 17px;
-
-  border-radius: 8px;
-
-  font-size: 15px;
-  line-height: 1.6;
-
-  white-space: pre-wrap;
-
-  animation: messageAppear 0.2s ease;
-
-  word-wrap: break-word;
-}
-
-@keyframes messageAppear {
-
-  from {
-    opacity: 0;
-    transform: translateY(5px);
   }
 
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-}
-
-
-/* ==============================
-   MENSAGEM DO USUÁRIO
-============================== */
-
-.user {
-  align-self: flex-end;
-
-  background: #2563eb;
-
-  color: #ffffff;
-
-  border-bottom-right-radius: 3px;
-
-  box-shadow:
-    0 4px 15px rgba(37, 99, 235, 0.18);
-}
-
-
-/* ==============================
-   MENSAGEM DA IA
-============================== */
-
-.bot {
-  align-self: flex-start;
-
-  background: #171b22;
-
-  color: #d9dde5;
-
-  border: 1px solid #242a35;
-
-  border-bottom-left-radius: 3px;
-
-  box-shadow:
-    0 3px 12px rgba(0, 0, 0, 0.25);
-}
-
-
-/* ==============================
-   TEXTO "PENSANDO"
-============================== */
-
-.typing {
-  color: #72809a;
-
-  font-style: italic;
-
-  animation: typingPulse 1.2s infinite;
-}
-
-@keyframes typingPulse {
-
-  0% {
-    opacity: 0.4;
-  }
-
-  50% {
-    opacity: 1;
-  }
-
-  100% {
-    opacity: 0.4;
-  }
-
-}
-
-
-/* ==============================
-   WELCOME
-============================== */
-
-.welcome {
-  margin: auto;
-
-  text-align: center;
-
-  max-width: 500px;
-
-  color: #727b8c;
-}
-
-.welcome h2 {
-  color: #ffffff;
-
-  font-size: 30px;
-
-  margin-bottom: 10px;
-}
-
-.welcome p {
-  color: #7e8798;
-
-  font-size: 15px;
-}
-
-
-/* ==============================
-   ÁREA DE INPUT
-============================== */
-
-.input-area {
-  position: fixed;
-
-  bottom: 0;
-  left: 0;
-  right: 0;
-
-  padding: 18px 10% 22px;
-
-  background:
-    linear-gradient(
-      to top,
-      #0b0d10 70%,
-      rgba(11, 13, 16, 0.92)
-    );
-
-  border-top: 1px solid #171c25;
-
-  z-index: 10;
-}
-
-
-/* ==============================
-   CAIXA DE INPUT
-============================== */
-
-.input-box {
-  width: 100%;
-  max-width: 900px;
-
-  margin: auto;
-
-  display: flex;
-  align-items: flex-end;
-
-  gap: 10px;
-
-  padding: 7px;
-
-  background: #181c23;
-
-  border: 1px solid #252c38;
-
-  border-radius: 12px;
-
-  box-shadow:
-    0 8px 30px rgba(0, 0, 0, 0.35);
-
-  transition: 0.2s ease;
-}
-
-.input-box:focus-within {
-  border-color: #2563eb;
-
-  box-shadow:
-    0 0 0 2px rgba(37, 99, 235, 0.15),
-    0 8px 30px rgba(0, 0, 0, 0.35);
-}
-
-
-/* ==============================
-   TEXTAREA
-============================== */
-
-textarea {
-  flex: 1;
-
-  min-height: 46px;
-  max-height: 150px;
-
-  resize: none;
-
-  padding: 13px 14px;
-
-  background: transparent;
-
-  border: none;
-  outline: none;
-
-  color: #ffffff;
-
-  font-size: 15px;
-
-  line-height: 1.5;
-}
-
-textarea::placeholder {
-  color: #6d7686;
-}
-
-textarea:focus {
-  outline: none;
-}
-
-
-/* ==============================
-   BOTÃO ENVIAR
-============================== */
-
-button {
-  height: 46px;
-  min-width: 92px;
-
-  border: none;
-  border-radius: 9px;
-
-  background: #2563eb;
-
-  color: #ffffff;
-
-  font-size: 14px;
-  font-weight: 700;
-
-  cursor: pointer;
-
-  transition:
-    background 0.2s ease,
-    transform 0.15s ease,
-    box-shadow 0.2s ease;
-}
-
-button:hover {
-  background: #1d4ed8;
-
-  transform: translateY(-1px);
-
-  box-shadow:
-    0 5px 15px rgba(37, 99, 235, 0.35);
-}
-
-button:active {
-  transform: translateY(0);
-}
-
-button:disabled {
-  background: #26334d;
-
-  color: #71809a;
-
-  cursor: not-allowed;
-
-  box-shadow: none;
-
-  transform: none;
-}
-
-
-/* ==============================
-   EFEITO DE SELEÇÃO
-============================== */
-
-::selection {
-  background: #2563eb;
-  color: white;
-}
-
-
-/* ==============================
-   RESPONSIVIDADE
-============================== */
-
-@media (max-width: 900px) {
-
-  #chat {
-    padding-left: 5%;
-    padding-right: 5%;
-  }
-
-  .input-area {
-    padding-left: 5%;
-    padding-right: 5%;
-  }
-
-  .message {
-    max-width: 85%;
-  }
-
-}
-
-
-@media (max-width: 600px) {
-
-  header {
-    height: 58px;
-    padding: 0 15px;
-  }
-
-  header h1 {
-    font-size: 16px;
-  }
-
-  header p {
-    display: none;
-  }
-
-  #chat {
-    padding:
-      20px
-      15px
-      110px;
-  }
-
-  .message {
-    max-width: 90%;
-
-    font-size: 14px;
-
-    padding: 11px 14px;
-  }
-
-  .input-area {
-    padding:
-      10px
-      10px
-      14px;
-  }
-
-  .input-box {
-    border-radius: 10px;
-  }
-
-  button {
-    min-width: 70px;
-    height: 44px;
-  }
-
-  textarea {
-    min-height: 44px;
-    font-size: 14px;
-  }
-
-}
+});
+
+app.listen(3000, () => {
+  console.log("Servidor rodando em http://localhost:3000");
+});
